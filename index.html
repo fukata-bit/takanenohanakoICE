@@ -403,6 +403,18 @@
     }
   }
 
+  function unlockAudio(){
+    const audioEl = document.getElementById("answerAudio");
+    if (!audioEl) return;
+    const p = audioEl.play();
+    if (p && typeof p.then === "function"){
+      p.then(() => {
+        audioEl.pause();
+        audioEl.currentTime = 0;
+      }).catch(() => { /* 解錠に失敗しても後続の再生を試みる */ });
+    }
+  }
+
   function playGuess(){
     const guessRaw = guessInput.value.trim();
     if (!guessRaw){
@@ -413,6 +425,7 @@
     revealBtn.disabled = true;
     guessInput.disabled = true;
     chipsWrap.querySelectorAll(".chip").forEach(c => c.disabled = true);
+    unlockAudio();
     statusLine.textContent = "占い中…！";
     cone.classList.add("spinning");
     resultBox.classList.remove("show");
@@ -464,7 +477,7 @@
     retryBtn.style.display = "inline-block";
   }
 
-  function resetGame(){ｆ
+  function resetGame(){
     guessInput.value = "";
     guessInput.disabled = false;
     chipsWrap.querySelectorAll(".chip").forEach(c => c.disabled = false);
